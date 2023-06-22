@@ -29,7 +29,7 @@ func main() {
     fmt.Print(value[0], "\n")
     input := bufio.NewScanner(os.Stdin)
     input.Scan()
-    if (input.Text() == value[1]){ //compare the user input to the correct answer
+    if (strings.TrimSpace(input.Text()) == strings.TrimSpace(value[1])){ //compare the user input to the correct answer, Trimspace is to remove the windows line terminator
       score ++
       fmt.Print("that's Correct!!")
     }   else{
