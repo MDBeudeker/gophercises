@@ -5,6 +5,7 @@ import (
   "os"
   "strings"
   "bufio"
+  "flag"
 )
 
 
@@ -15,11 +16,13 @@ func check( e error){
 }
 
 func main() {
+
+  // fileReading w flags
+  fileNamePtr := flag.String("filename","problems.csv","The quiz file")
+  flag.Parse()       // needed to execute CLI parsing
+  dat, err := os.ReadFile(*fileNamePtr)
+  
   score := 0
-  fileName := "problems.csv"
-
-  dat, err := os.ReadFile(fileName)
-
   check(err)
 
   lines := strings.Split(string(dat), "\n")
