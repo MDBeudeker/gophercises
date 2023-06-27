@@ -6,6 +6,8 @@ import (
   "strings"
   "bufio"
   "flag"
+  "encoding/csv"
+  "log"
 )
 
 
@@ -20,15 +22,18 @@ func main() {
   // fileReading w flags
   fileNamePtr := flag.String("filename","problems.csv","The quiz file")
   flag.Parse()       // needed to execute CLI parsing
-  dat, err := os.ReadFile(*fileNamePtr)
+  dat, err := os.Open(*fileNamePtr)
   
   score := 0
   check(err)
 
-  lines := strings.Split(string(dat), "\n")
+  filedata, err := csv.NewReader(dat).ReadAll()
+  if err != nil {
+    log.Println(err)
+    return
+}
 
-  for i := 0; i< len(lines)-1; i++ {
-    value := strings.Split(lines[i],",")
+  for _, value := range filedata{
     fmt.Print(value[0], "\n")
     input := bufio.NewScanner(os.Stdin)
     input.Scan()
@@ -38,6 +43,6 @@ func main() {
     }   else{
       fmt.Print("Wrong answer")
     }
-      fmt.Print("\nYour Score is now ",score," out of ", len(lines)-1,"\n")
+      fmt.Print("\nYour Score is now ",score," out of ", len(filedata),"\n")
   }
 }
