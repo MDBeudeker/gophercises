@@ -25,7 +25,8 @@ func main() {
   rand.Seed(time.Now().Unix())
   // flags for file reading, randomizing the quiz order
   fileNamePtr := flag.String("filename","problems.csv","The quiz file")
-  randomPtr := flag.Bool("random",false,"shuffle the quiz order")
+  randomPtr := flag.Bool("random",false,"shuffle the quiz order; 0 = regular order (default), 1= shuffle")
+  secondsPtr := flag.Uint("timer",30,"allowed time in seconds")
 
   // once all flags are declared, call flag.Parse() to execute the command-line parsing.
   flag.Parse()
@@ -40,6 +41,12 @@ func main() {
     return
   }
 
+  // timer function with "time up" text
+  timer := time.AfterFunc(time.Duration(*secondsPtr) * time.Second, func() {
+    fmt.Println("Time's up!\nYou Scored", score,"out of",len(filedata),"points!")
+    os.Exit(4)
+  })
+  defer timer.Stop()
 
   // if user wants random order, randomize the file name
   if *randomPtr == true {
@@ -57,5 +64,5 @@ func main() {
 
     }
   }
-  fmt.Print("\nYour Score is ",score," out of ", len(filedata),"\n")
+  fmt.Print("Done!\nYour Score is ",score," out of ", len(filedata),"\n")
 }
