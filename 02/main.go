@@ -1,11 +1,23 @@
 package main
 
-import(
+import (
 	"fmt"
+	"log"
+	"net/http"
 )
 
 func main() {
-	fmt.Println("hello world")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		fmt.Fprintf(w,"Hello world!")
+	})
+
+	port :=":8080"
+
+	fmt.Print("starting server at localhost",port)
+	if err := http.ListenAndServe(port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // TODO
