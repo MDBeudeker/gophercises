@@ -13,6 +13,8 @@ func main() {
 	})
 
 	port :=":8080"
+	redirect("/brave","https://github.com/brave")
+	redirect("/thebox","https://themetalbox.com/")
 
 	fmt.Print("starting server at localhost",port)
 	if err := http.ListenAndServe(port, nil); err != nil {
@@ -20,11 +22,14 @@ func main() {
 	}
 }
 
+// function that takes a input path and serves the upstream
+func redirect(path string, upstream string) {
+	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request){
+		http.Redirect(w,r, upstream,http.StatusSeeOther)
+	})	
+}
+
 // TODO
-
-// write code to serve a server that listens on localhost:8080
-
-// write code to show two urls that forward to a different website
 
 // invoke the YAML handling
 // write flag that loads the YAML file
