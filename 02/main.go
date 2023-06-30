@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"example.com/02/urlshort"
 )
 
 func main() {
@@ -13,9 +14,15 @@ func main() {
 	})
 
 	port :=":8080"
-	redirect("/brave","https://github.com/brave")
-	redirect("/thebox","https://themetalbox.com/")
 
+	yaml := `
+- path: /brave
+  url: https://github.com/brave
+- path /thebox
+  url: https://themetalbox.com/
+`
+
+	fmt.Print (yaml)
 	fmt.Print("starting server at localhost",port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatal(err)
