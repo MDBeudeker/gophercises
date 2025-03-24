@@ -2,38 +2,51 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"example.com/02/urlshort"
 )
 
 func main() {
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w,"Hello world!")
-	})
+	mux := defaultMux()
 
-	port :=":8080"
+	pathsToUrls:= map[string]string{
+		"/reddit": "https://old.reddit.com",
+		"/github": "https://github.com",
+	}
 
+	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
+
+	// Build the YAMLHandler using the Maphandler as the fallback
 	yaml := `
-- path: /brave
-  url: https://github.com/brave
-- path /thebox
+- path: /reddit
+  url: https://old.reddit.com
+- path: /thebox
   url: https://themetalbox.com/
 `
 
-	fmt.Print (yaml)
-	fmt.Print("starting server at localhost",port)
-	if err := http.ListenAndServe(port, nil); err != nil {
-		log.Fatal(err)
+	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
+	if err != nil {
+		panic(err)
 	}
+
+	port :=":8080"
+
+	fmt.Print("starting server at localhost",port)
+	http.ListenAndServe(port, yamlHandler)
+	
 }
 
-// function that takes a input path and serves the upstream
-func redirect(path string, upstream string) {
-	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request){
-		http.Redirect(w,r, upstream,http.StatusSeeOther)
-	})	
+
+
+func defaultMux() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", hello)
+	return mux
+}
+
+func hello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hello World!")
 }
 
 // TODO
